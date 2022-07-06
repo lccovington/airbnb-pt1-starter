@@ -88,4 +88,45 @@ describe("GET /bookings/listings", () => {
 
 /************************************** POST bookings/listings/:listingId */
 
+describe("POST bookings/listings/:listingId", () => {
+  test("Authed user can book a listing they don't own.", async () => {
+    const listingId = testListingIds[0]
+    const res = await request(app)
+      .post(`/bookings/listings/${listingId}`)
+      .set("authorization", `Bearer ${testTokens.jloToken}`)
+      .send({ newBooking: { startDate: "04-01-2021", endDate: "04-13-2021", guests: 10 } })
+
+    expect(res.statusCode).toEqual(201)
+
+    const { booking } = res.body
+
+    // coerce to proper datatype
+    booking.totalCost = Number(booking.totalCost)
+
+    expect(booking).toEqual({
+      id: expect.any(Number),
+      startDate: new Date("04-01-2021").toISOString(),
+      endDate: new Date("04-13-2021").toISOString(),
+      paymentMethod: "card",
+      guests: 10,
+      username: "jlo",
+      hostUsername: "lebron",
+      totalCost: expect.any(Number),
+      listingId: listingId,
+      userId: expect.any(Number),
+      createdAt: expect.any(String),
+    })
+  })
+
+  test("Throws a Bad Request error when user attempts to book their own listing", async () => {
+    const listingId = testListingIds[0]
+    const res = await request(app)
+      .post(`/bookings/listings/${listingId}`)
+      .set("authorization", `Bearer ${testTokens.lebronToken}`)
+      .send({ newBooking: { startDate: "04-01-2021", endDate: "04-13-2021", guests: 10 } })
+
+    expect(res.statusCode).toEqual(400)
+  })
+})
+
 /************************************** GET bookings/listings/:listingId */
