@@ -21,24 +21,23 @@ describe("Booking", () => {
       const listingId = testListingIds[0]
       const listing = await Listing.fetchListingById(listingId)
 
-      const startDate = "12-12-2021"
-      const endDate = "12-14-2021"
-      const newBooking = { startDate, endDate }
+      const startDate = "03-05-2021"
+      const endDate = "03-07-2021"
+      const guests = 1
+      const newBooking = { startDate, endDate, guests }
 
       const booking = await Booking.createBooking({ newBooking, listing, user })
 
-      booking.totalCost = Number(booking.totalCost)
-
       expect(booking).toEqual({
         id: expect.any(Number),
-        startDate: new Date("12-12-2021"),
-        endDate: new Date("12-14-2021"),
-        paymentMethod: "card",
+        startDate: expect.any(Date),
+        endDate: expect.any(Date),
+        paymentMethod: expect.any(String),
         guests: 1,
         totalCost: Math.ceil(3 * (Number(listing.price) + Number(listing.price) * 0.1)),
         listingId: listingId,
         username: "jlo",
-        hostUsername: "lebron",
+        hostUsername: expect.any(String),
         userId: expect.any(Number),
         createdAt: expect.any(Date),
       })
@@ -49,7 +48,7 @@ describe("Booking", () => {
       const listingId = testListingIds[0]
       const listing = await Listing.fetchListingById(listingId)
 
-      const endDate = "12-14-2021"
+      const endDate = "03-07-2021"
       const newBooking = { endDate }
 
       try {

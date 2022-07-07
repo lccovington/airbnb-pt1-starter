@@ -27,10 +27,6 @@ class Booking {
           ($2)::date, 
           ($3)::date, 
           $4, 
-          -- calculate total_cost by
-          -- multiplying days spent (+1)
-          -- with the listing price + market fees
-          -- rounded up to nearest cent
           CEIL(
             (($3)::date - ($2)::date + 1) * ($5 + $5 * 0.1)
           ), 
@@ -42,7 +38,7 @@ class Booking {
                   start_date AS "startDate",
                   end_date AS "endDate",
                   guests,
-                  total_cost AS "totalCost",
+                  total_cost::INTEGER AS "totalCost",
                   listing_id AS "listingId",
                   user_id AS "userId",
                   (

@@ -48,12 +48,12 @@ router.post(
   permissions.authedUserIsNotListingOwner,
   async (req, res, next) => {
     try {
-      // create new booking for listing
       const { user, listing } = res.locals
-      const booking = await Booking.createBooking({ user, listing, newBooking: req.body.newBooking })
+      const { newBooking } = req.body.newBooking;
+      const booking = await Booking.createBooking({ user, listing, newBooking })
       return res.status(201).json({ booking })
-    } catch (err) {
-      next(err)
+    } catch (error) {
+      next(error)
     }
   }
 )
